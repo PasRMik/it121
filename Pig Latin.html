@@ -3,99 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pig Latin Translator - Updated</title>
+    <title>Pig Latin Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        #translatorLabel {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-    <h1>Pig Latin Translator</h1>
-    
-    <!-- Input for text to be translated -->
-    <textarea id="inputText" rows="4" cols="50" placeholder="Enter text here..."></textarea><br>
-    <button onclick="translateText()">Translate</button>
-    
-    <!-- Area to display the output -->
-    <h3>Translated Text:</h3>
-    <p id="outputText"></p>
+
+    <!-- Label to simulate the title for Pig Latin Translator -->
+    <div id="translatorLabel">Pig Latin Translator</div>
+
+    <!-- Div where the translated result will appear -->
+    <div id="result"></div>
 
     <script>
-        
+        /* 
+         * Pig Latin Translator
+         * Author: Pascal-Ricky Mikulu
+         * Date: [Current Date]
+         * 
+         * This program translates a user input phrase into Pig Latin
+         * following the given rules:
+         * 1. If a word starts with a vowel, append 'way' to the end.
+         * 2. If a word starts with one consonant, move it to the end and add 'ay'.
+         * 3. If a word starts with two consonants, move both to the end and add 'ay'.
+         * 
+         * The result is displayed on the webpage.
+         */
 
-        // Function to check if a character is a vowel
-        function isVowel(char) {
-            // Return true if the character is 'a', 'e', 'i', 'o', or 'u' (case-insensitive)
-            return ['a', 'e', 'i', 'o', 'u'].includes(char.toLowerCase());
-        }
+        // Prompt user for input, using the native browser dialog
+        let inputPhrase = prompt("Pig Latin Translator\n\nEnter a phrase to translate:");
 
-        // Function to translate a single word to Pig Latin
-        function translateWord(word) {
-            if (word.length === 0) return word;
+        // Function to translate the input phrase
+        function pigLatin(phrase) {
+            const vowels = ['a', 'e', 'i', 'o', 'u'];
+            let words = phrase.toLowerCase().split(' '); // split the input into words
+            let result = [];
 
-            // Store whether the word is capitalized
-            const isCapitalized = word[0] === word[0].toUpperCase();
-            const lowerWord = word.toLowerCase();
-
-            let pigLatin = '';
-
-            // Check if the word starts with a vowel
-            if (isVowel(lowerWord[0])) {
-                // Rule 1: Words starting with a vowel, append 'way'
-                pigLatin = lowerWord + 'way';
-            } else {
-                // Handle words starting with consonants
-                // Rule 2: Words starting with one consonant
-                if (lowerWord.length > 1 && !isVowel(lowerWord[0]) && !isVowel(lowerWord[1])) {
-                    // Rule 3: Words starting with two consonants
-                    pigLatin = lowerWord.slice(2) + lowerWord.slice(0, 2) + 'ay';
+            words.forEach(word => {
+                if (word.length <= 1) {
+                    result.push("Cannot translate single-letter word.");
+                } else if (vowels.includes(word[0])) {
+                    // Rule 1: word starts with a vowel
+                    result.push(word + "way");
+                } else if (!vowels.includes(word[0]) && vowels.includes(word[1])) {
+                    // Rule 2: word starts with one consonant
+                    result.push(word.slice(1) + word[0] + "ay");
                 } else {
-                    // Rule 2: Words starting with one consonant
-                    pigLatin = lowerWord.slice(1) + lowerWord[0] + 'ay';
+                    // Rule 3: word starts with two consonants
+                    result.push(word.slice(2) + word[0] + word[1] + "ay");
                 }
-            }
-
-            // Capitalize the first letter if the original word was capitalized
-            if (isCapitalized) {
-                pigLatin = pigLatin.charAt(0).toUpperCase() + pigLatin.slice(1);
-            }
-
-            return pigLatin;
-        }
-
-        // Function to translate the entire text input
-        function translateText() {
-            const input = document.getElementById('inputText').value.trim();
-
-            // Step 1: Check for empty input and display a warning if no text is entered
-            if (input.length === 0) {
-                document.getElementById('outputText').innerText = "Warning: Input can't be empty.";
-                return;
-            }
-
-            const words = input.split(/\s+/); // Split input into words based on spaces
-
-            // Step 2: Check if the input contains a single-letter word
-            if (words.length === 1 && words[0].length === 1) {
-                document.getElementById('outputText').innerText = "Input can't be translated.";
-                return;
-            }
-
-            // Step 3: Translate each word using the translateWord function
-            const translatedWords = words.map(word => {
-                // If the word is a single letter, mark it as untranslatable
-                if (word.length === 1) {
-                    return null;
-                }
-                return translateWord(word); // Translate each valid word
             });
 
-            // Step 4: Handle untranslatable words (single letters)
-            if (translatedWords.includes(null)) {
-                document.getElementById('outputText').innerText = "Input can't be translated.";
-                return;
-            }
+            return result.join(' ');
+        }
 
-            // Step 5: Join the translated words into a sentence and display the result
-            const translatedText = translatedWords.join(' ');
-            document.getElementById('outputText').innerText = translatedText;
+        // Handle empty input or cancelled input
+        if (inputPhrase === null || inputPhrase.trim() === "") {
+            document.getElementById("result").innerText = "Input cannot be empty.";
+        } else {
+            // Show the Pig Latin translation result on the page
+            let translatedPhrase = pigLatin(inputPhrase);
+            document.getElementById("result").innerText = "Pig Latin Translation: " + translatedPhrase;
         }
     </script>
+
 </body>
 </html>
