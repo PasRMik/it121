@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pig Latin Translator - Updated</title>
+</head>
+<body>
+    <h1>Pig Latin Translator</h1>
+    
+    <!-- Input for text to be translated -->
+    <textarea id="inputText" rows="4" cols="50" placeholder="Enter text here..."></textarea><br>
+    <button onclick="translateText()">Translate</button>
+    
+    <!-- Area to display the output -->
+    <h3>Translated Text:</h3>
+    <p id="outputText"></p>
+
+    <script>
+        /**
+         * Name: Pig Latin Translator
+         * Author: Pascal-Ricky Mikulu
+         * Date: October 5, 2024
+         *
+         * This program takes user input text, translates it into Pig Latin,
+         * and displays the translated result. It handles words starting with vowels,
+         * consonants, and two consonants, and it can process multiple-word phrases.
+         * A warning message is displayed if no input is provided.
+         */
+
+        // Pseudo-code for the main program steps:
+        // 1. Define a function to check if a character is a vowel.
+        // 2. Define a function to translate a single word to Pig Latin based on its first letters.
+        // 3. Define a function to handle empty input, single letters, and multiple-word phrases.
+        // 4. Translate each word in a multiple-word phrase and join them to form a sentence.
+        // 5. Print the translated Pig Latin text or display an error message.
+
+        // Function to check if a character is a vowel
+        function isVowel(char) {
+            // Return true if the character is 'a', 'e', 'i', 'o', or 'u' (case-insensitive)
+            return ['a', 'e', 'i', 'o', 'u'].includes(char.toLowerCase());
+        }
+
+        // Function to translate a single word to Pig Latin
+        function translateWord(word) {
+            if (word.length === 0) return word;
+
+            // Store whether the word is capitalized
+            const isCapitalized = word[0] === word[0].toUpperCase();
+            const lowerWord = word.toLowerCase();
+
+            let pigLatin = '';
+
+            // Check if the word starts with a vowel
+            if (isVowel(lowerWord[0])) {
+                // Rule 1: Words starting with a vowel, append 'way'
+                pigLatin = lowerWord + 'way';
+            } else {
+                // Handle words starting with consonants
+                // Rule 2: Words starting with one consonant
+                if (lowerWord.length > 1 && !isVowel(lowerWord[0]) && !isVowel(lowerWord[1])) {
+                    // Rule 3: Words starting with two consonants
+                    pigLatin = lowerWord.slice(2) + lowerWord.slice(0, 2) + 'ay';
+                } else {
+                    // Rule 2: Words starting with one consonant
+                    pigLatin = lowerWord.slice(1) + lowerWord[0] + 'ay';
+                }
+            }
+
+            // Capitalize the first letter if the original word was capitalized
+            if (isCapitalized) {
+                pigLatin = pigLatin.charAt(0).toUpperCase() + pigLatin.slice(1);
+            }
+
+            return pigLatin;
+        }
+
+        // Function to translate the entire text input
+        function translateText() {
+            const input = document.getElementById('inputText').value.trim();
+
+            // Step 1: Check for empty input and display a warning if no text is entered
+            if (input.length === 0) {
+                document.getElementById('outputText').innerText = "Warning: Input can't be empty.";
+                return;
+            }
+
+            const words = input.split(/\s+/); // Split input into words based on spaces
+
+            // Step 2: Check if the input contains a single-letter word
+            if (words.length === 1 && words[0].length === 1) {
+                document.getElementById('outputText').innerText = "Input can't be translated.";
+                return;
+            }
+
+            // Step 3: Translate each word using the translateWord function
+            const translatedWords = words.map(word => {
+                // If the word is a single letter, mark it as untranslatable
+                if (word.length === 1) {
+                    return null;
+                }
+                return translateWord(word); // Translate each valid word
+            });
+
+            // Step 4: Handle untranslatable words (single letters)
+            if (translatedWords.includes(null)) {
+                document.getElementById('outputText').innerText = "Input can't be translated.";
+                return;
+            }
+
+            // Step 5: Join the translated words into a sentence and display the result
+            const translatedText = translatedWords.join(' ');
+            document.getElementById('outputText').innerText = translatedText;
+        }
+    </script>
+</body>
+</html>
