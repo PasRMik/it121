@@ -31,21 +31,21 @@
   </div>
 
   <script>
-    // Sample data string
+    // data string
     const grades = "alice - 78, bob - 85, charlie - 90, dave - 66, eve - 92";
 
-    // Parse the grades string
+    // grades string
     const students = grades.split(", ").map(item => {
       const [name, score] = item.split(" - ");
       return { name: name.trim(), score: parseInt(score) };
     });
 
-    // Helper function to capitalize the first letter of each student's name
+    // capitalize the first letter of each name
     function capitalizeName(name) {
       return name.charAt(0).toUpperCase() + name.slice(1);
     }
 
-    // Display student names with scores
+    // Display names with scores
     const studentDataDiv = document.getElementById("studentData");
     students.forEach(student => {
       const studentName = capitalizeName(student.name);
@@ -53,14 +53,14 @@
       studentDataDiv.innerHTML += `<p>${studentName} - ${studentScore}</p>`;
     });
 
-    // Calculate total students, lowest score, highest score, and average score
+    // lowest score, highest score, and average 
     const totalStudents = students.length;
     const scores = students.map(student => student.score);
     const lowestScore = Math.min(...scores);
     const highestScore = Math.max(...scores);
     const averageScore = (scores.reduce((sum, score) => sum + score, 0) / totalStudents).toFixed(2);
 
-    // Display summary data
+    // Display summary 
     document.getElementById("totalStudents").textContent = totalStudents;
     document.getElementById("lowestScore").textContent = lowestScore;
     document.getElementById("highestScore").textContent = highestScore;
