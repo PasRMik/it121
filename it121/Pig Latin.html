@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pig Latin Translator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 50px;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+        #translatorLabel {
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Label to simulate the title for Pig Latin Translator -->
+    <div id="translatorLabel">Pig Latin Translator</div>
+
+    <!-- Div where the translated result will appear -->
+    <div id="result"></div>
+
+    <script>
+       
+
+        // Prompt user for input, using the native browser dialog
+        let inputPhrase = prompt("Pig Latin Translator\n\nEnter a phrase to translate:");
+
+        // Function to translate the input phrase
+        function pigLatin(phrase) {
+            const vowels = ['a', 'e', 'i', 'o', 'u'];
+            let words = phrase.toLowerCase().split(' '); // split the input into words
+            let result = [];
+
+            words.forEach(word => {
+                if (word.length <= 1) {
+                    result.push("Cannot translate single-letter word.");
+                } else if (vowels.includes(word[0])) {
+                    // Rule 1: word starts with a vowel
+                    result.push(word + "way");
+                } else if (!vowels.includes(word[0]) && vowels.includes(word[1])) {
+                    // Rule 2: word starts with one consonant
+                    result.push(word.slice(1) + word[0] + "ay");
+                } else {
+                    // Rule 3: word starts with two consonants
+                    result.push(word.slice(2) + word[0] + word[1] + "ay");
+                }
+            });
+
+            return result.join(' ');
+        }
+
+        // Handle empty input or cancelled input
+        if (inputPhrase === null || inputPhrase.trim() === "") {
+            document.getElementById("result").innerText = "Input cannot be empty.";
+        } else {
+            // Show the Pig Latin translation result on the page
+            let translatedPhrase = pigLatin(inputPhrase);
+            document.getElementById("result").innerText = "Pig Latin Translation: " + translatedPhrase;
+        }
+    </script>
+
+</body>
+</html>
