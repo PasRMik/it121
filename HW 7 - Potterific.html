@@ -105,12 +105,12 @@
 
     const uniqueHouses = [...new Set(characters.map(char => char.house).filter(Boolean))];
 
-    // Generate house filter buttons
+    // house filter btn
     uniqueHouses.forEach(house => {
       $('#buttons-container').append(`<button class="filter-btn" data-house="${house}">${house}</button>`);
     });
 
-    // Generate table rows
+    // table rows
     const generateTable = () => {
       $('#character-table tbody').empty();
       characters.forEach((char, index) => {
@@ -128,7 +128,7 @@
 
     generateTable();
 
-    // Filter function
+    // function
     $('.filter-btn').on('click', function() {
       const selectedHouse = $(this).data('house');
       $('.filter-btn').removeClass('active');
@@ -137,14 +137,14 @@
       applyRowColors();
     });
 
-    // Reset button functionality
+    // Reset button for all
     $('#reset').on('click', function() {
       $('.filter-btn').removeClass('active');
       $('#character-table tbody tr').show();
       applyRowColors();
     });
 
-    // Function to apply alternating colors to visible rows
+    // apply alternating colours
     const applyRowColors = () => {
       $('#character-table tbody tr:visible').removeClass('highlight').filter(':even').addClass('highlight');
     };
