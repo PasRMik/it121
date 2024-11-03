@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Harry Potter Character Filter</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      font-size: 18px;
+    }
+    #buttons-container {
+      text-align: center;
+      margin: 10px 0;
+    }
+    .filter-btn {
+      display: inline-block;
+      padding: 5px 10px;
+      margin: 2px;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    .filter-btn:hover {
+      background-color: #ddd;
+    }
+    .filter-btn.active {
+      background-color: #ffc107;
+    }
+    #reset {
+      padding: 5px 10px;
+      margin: 2px;
+      background-color: #f2f2f2;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+    #reset:hover {
+      background-color: #ddd;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 5px;
+      border: 1px solid black;
+      text-align: left;
+    }
+    th {
+      background-color: #f9f9f9;
+    }
+    tr.highlight {
+      background-color: #ffffcc;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Harry Potter Characters</h1>
+
+<div id="buttons-container"></div>
+<button id="reset">Reset</button>
+
+<table id="character-table">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Role</th>
+      <th>House</th>
+      <th>Gender</th>
+      <th>Alignment</th>
+    </tr>
+  </thead>
+  <tbody>
+    <!-- Rows will be added here by JavaScript -->
+  </tbody>
+</table>
+
+<script>
+  $(document).ready(function() {
+    const characters = [
+      { name: "Albus Dumbledore", role: "staff", house: "Gryffindor", gender: "m", alignment: "good" },
+      { name: "Nymphadora Tonks", role: "staff", house: "Hufflepuff", gender: "f", alignment: "good" },
+      { name: "Ron Weasley", role: "student", house: "Gryffindor", gender: "m", alignment: "good" },
+      { name: "Ginny Weasley", role: "student", house: "Gryffindor", gender: "f", alignment: "good" },
+      { name: "Hermione Granger", role: "student", house: "Gryffindor", gender: "f", alignment: "good" },
+      { name: "Mad-eye Moody", role: "staff", house: "", gender: "m", alignment: "good" },
+      { name: "Prof McGonagall", role: "staff", house: "Gryffindor", gender: "f", alignment: "good" },
+      { name: "Harry Potter", role: "student", house: "Gryffindor", gender: "m", alignment: "good" },
+      { name: "Draco Malfoy", role: "student", house: "Slytherin", gender: "m", alignment: "evil" },
+      { name: "Hagrid", role: "staff", house: "Gryffindor", gender: "m", alignment: "good" },
+      { name: "Luna Lovegood", role: "student", house: "Ravenclaw", gender: "f", alignment: "good" },
+      { name: "Voldemort", role: "student", house: "Slytherin", gender: "m", alignment: "evil" },
+      { name: "Bellatrix Lestrange", role: "staff", house: "Slytherin", gender: "f", alignment: "evil" },
+      { name: "Severus Snape", role: "staff", house: "Slytherin", gender: "m", alignment: "?" }
+    ];
+
+    const uniqueHouses = [...new Set(characters.map(char => char.house).filter(Boolean))];
+
+    // Generate house filter buttons
+    uniqueHouses.forEach(house => {
+      $('#buttons-container').append(`<button class="filter-btn" data-house="${house}">${house}</button>`);
+    });
+
+    // Generate table rows
+    const generateTable = () => {
+      $('#character-table tbody').empty();
+      characters.forEach((char, index) => {
+        $('#character-table tbody').append(`
+          <tr data-house="${char.house}" class="${index % 2 === 0 ? 'highlight' : ''}">
+            <td>${char.name}</td>
+            <td>${char.role}</td>
+            <td>${char.house}</td>
+            <td>${char.gender}</td>
+            <td>${char.alignment}</td>
+          </tr>
+        `);
+      });
+    };
+
+    generateTable();
+
+    // Filter function
+    $('.filter-btn').on('click', function() {
+      const selectedHouse = $(this).data('house');
+      $('.filter-btn').removeClass('active');
+      $(this).addClass('active');
+      $('#character-table tbody tr').hide().filter(`[data-house="${selectedHouse}"]`).show();
+      applyRowColors();
+    });
+
+    // Reset button functionality
+    $('#reset').on('click', function() {
+      $('.filter-btn').removeClass('active');
+      $('#character-table tbody tr').show();
+      applyRowColors();
+    });
+
+    // Function to apply alternating colors to visible rows
+    const applyRowColors = () => {
+      $('#character-table tbody tr:visible').removeClass('highlight').filter(':even').addClass('highlight');
+    };
+  });
+</script>
+
+</body>
+</html>
