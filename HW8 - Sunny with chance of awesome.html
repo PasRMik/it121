@@ -1,0 +1,121 @@
+<html>
+  <head>
+    <script
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo="
+      crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <h3>Daily Weather Forecast</h3>
+    <hr>
+    <form id="weather-form">
+      <label for="city">City:</label>
+      <input type="text" id="city" name="city">
+      <br>
+      <label for="state">State:</label>
+      <select id="state" name="state">
+        <!-- Insert all state options as provided in your template -->
+        <option value="CA">Washington State</option>
+        <option value="NY">Oregon</option>
+        <!-- Add other state options here -->
+      </select>
+      <br>
+      <label for="zipcode">Or Zip Code:</label>
+      <input type="text" id="zipcode" name="zipcode" placeholder="Optional">
+      <br>
+      <button type="button" id="submit-button">Submit</button>
+    </form>
+    <div id="forecast"></div>
+
+    <script>
+      const GEO_API_KEY = "e6822f7f7c57a7ac37bfdbfee7c6d5b8";
+      const FORECAST_API_KEY = "1be8ce6ae5efd17db0c39372752e10e6";
+
+      const kelvinToF = (value) => {
+        return (((Number(value) - 273.15) * 9) / 5 + 32).toFixed(2);
+      };
+
+      const displayError = (message) => {
+        $('#forecast').html(`<p style="color:red;">${message}</p>`);
+      };
+
+      const displayForecast = (forecast) => {
+        let forecastHtml = '<h4>5-Day Forecast:</h4>';
+        forecastHtml += '<div style="display: flex; flex-wrap: wrap;">';
+
+        forecast.forEach((day) => {
+          forecastHtml += `
+            <div style="border: 1px solid #ccc; padding: 10px; margin: 5px; width: 150px;">
+              <p><strong>${day.date}</strong></p>
+              <img src="https://openweathermap.org/img/wn/${day.icon}@2x.png" alt="${day.description}">
+              <p>Weather: ${day.description}</p>
+              <p>Min Temp: ${day.minTemp}°F</p>
+              <p>Max Temp: ${day.maxTemp}°F</p>
+              <p>Humidity: ${day.humidity}%</p>
+            </div>
+          `;
+        });
+
+        forecastHtml += '</div>';
+        $('#forecast').html(forecastHtml);
+      };
+
+      $('#submit-button').on('click', async () => {
+        const city = $('#city').val().trim();
+        const state = $('#state').val();
+        const zipCode = $('#zipcode').val().trim();
+
+        if ((!city || !isNaN(city)) && !zipCode) {
+          displayError('Please enter a valid city name or zip code.');
+          return;
+        }
+
+        $('#forecast').html('<p>Loading...</p>');
+
+        try {
+          let locationData;
+
+          if (zipCode) {
+            const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/zip?zip=${zipCode},US&appid=${GEO_API_KEY}`);
+            locationData = await geoResponse.json();
+
+            if (!locationData.lat || !locationData.lon) {
+              throw new Error('Invalid zip code.');
+            }
+          } else {
+            const geoResponse = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${city},${state},US&appid=${GEO_API_KEY}`);
+            locationData = (await geoResponse.json())[0];
+
+            if (!locationData) {
+              throw new Error('City not found.');
+            }
+          }
+
+          const { lat, lon } = locationData;
+
+          const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${FORECAST_API_KEY}`);
+          const forecastData = await forecastResponse.json();
+
+          if (!forecastData.list || forecastData.list.length === 0) {
+            throw new Error('No forecast data available.');
+          }
+
+          const dailyForecasts = forecastData.list
+            .filter((item) => item.dt_txt.includes('12:00:00'))
+            .map((item) => ({
+              date: new Date(item.dt_txt).toLocaleDateString(),
+              minTemp: kelvinToF(item.main.temp_min),
+              maxTemp: kelvinToF(item.main.temp_max),
+              humidity: item.main.humidity,
+              description: item.weather[0].description,
+              icon: item.weather[0].icon,
+            }));
+
+          displayForecast(dailyForecasts);
+        } catch (error) {
+          displayError(error.message);
+        }
+      });
+    </script>
+  </body>
+</html>
