@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Animation</title>
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: #f0f8ff;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="myCanvas" width="600" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Variables for the bouncing rectangle
+        let rectX = 50, rectY = 50;
+        let rectSpeedX = 2, rectSpeedY = 2;
+        const rectWidth = 50, rectHeight = 30;
+
+        // Variables for the spinning circle
+        let circleAngle = 0;
+
+        // Helper function to draw a grid of lines
+        function drawGrid() {
+            ctx.save(); // Save current state
+            ctx.strokeStyle = '#dcdcdc';
+            for (let x = 0; x <= canvas.width; x += 20) {
+                ctx.beginPath();
+                ctx.moveTo(x, 0);
+                ctx.lineTo(x, canvas.height);
+                ctx.stroke();
+            }
+            for (let y = 0; y <= canvas.height; y += 20) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+            ctx.restore(); // Restore original state
+        }
+
+        // Function to draw the bouncing rectangle
+        function drawRectangle() {
+            ctx.save(); // Save current state
+            ctx.fillStyle = '#ff6347'; // Tomato color
+            ctx.strokeStyle = '#2e8b57'; // Sea green
+            ctx.lineWidth = 3;
+
+            ctx.beginPath();
+            ctx.rect(rectX, rectY, rectWidth, rectHeight);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore(); // Restore original state
+        }
+
+        // Function to draw the spinning circle
+        function drawCircle() {
+            const radius = 30;
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            ctx.save(); // Save current state
+            ctx.fillStyle = '#4682b4'; // Steel blue
+            ctx.strokeStyle = '#ffa500'; // Orange
+            ctx.lineWidth = 2;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, circleAngle, circleAngle + Math.PI / 2);
+            ctx.fill();
+            ctx.stroke();
+            ctx.restore(); // Restore original state
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+
+            drawGrid();        // Draw the background grid
+            drawRectangle();   // Draw the bouncing rectangle
+            drawCircle();      // Draw the spinning circle
+
+            // Update rectangle position
+            rectX += rectSpeedX;
+            rectY += rectSpeedY;
+
+            // Bounce off the edges
+            if (rectX <= 0 || rectX + rectWidth >= canvas.width) {
+                rectSpeedX *= -1;
+            }
+            if (rectY <= 0 || rectY + rectHeight >= canvas.height) {
+                rectSpeedY *= -1;
+            }
+
+            // Update circle angle for spinning effect
+            circleAngle += 0.05;
+
+            requestAnimationFrame(animate); // Loop animation
+        }
+
+        animate(); // Start animation
+    </script>
+</body>
+</html>
