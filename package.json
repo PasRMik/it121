@@ -1,0 +1,16 @@
+{
+    "name": "mikapp",
+    "version": "1.0.0",
+    "description": "A simple Node.js web server",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "author": "Pascal-Ricky Mikulu",
+    "license": "ISC",
+    "repository": {
+      "type": "git",
+      "url": "git@github.com:PasRMik/it121.git"
+    }
+  }
